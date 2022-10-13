@@ -1,0 +1,15 @@
+{
+  "name": "enwords",
+  "description": "Analyze and Track English words",
+  "version": "1.2",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "./logo128.png"
+  },
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+    "128": "./logo128.png"
+  }
+}
