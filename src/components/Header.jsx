@@ -1,5 +1,5 @@
 const Header = ({ handleSearch }) => (
-  <div className="bg-neutral-900 fixed top-0 z-50 flex flex-col">
+  <div className="bg-neutral-900 fixed w-full top-0 z-50 flex flex-col">
     <div className="p-3 flex items-center h-12 border-b border-neutral-800">
       <h2 className="inline-flex items-baseline text-[22px] text-neutral-200 font-bold mr-4">
         enwords

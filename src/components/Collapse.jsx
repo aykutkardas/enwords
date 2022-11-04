@@ -6,6 +6,7 @@ import clsx from "clsx";
 const Collapse = ({
   data,
   title,
+  icon,
   loading,
   initialOpen = false,
   handleKnown,
@@ -24,25 +25,31 @@ const Collapse = ({
   return (
     <div>
       <h4
-        className="sticky top-0 select-none p-3 cursor-pointer border-b flex items-center justify-between shadow-xl border-neutral-600 bg-neutral-900 text-neutral-300 text-sm font-bold"
+        className="sticky top-0 select-none p-3 z-30 cursor-pointer border-b flex items-center justify-between shadow-xl border-neutral-600 bg-neutral-900 text-neutral-300 text-sm font-bold"
         onClick={() => setOpen(!open)}
       >
-        <div>
+        <div className="inline-flex items-center">
           {title}
+          {icon && <Icon icon={icon} size={18} className="ml-2" />}
           <span className="ml-2 text-neutral-400 text-[10px] font-normal">
             {data.length}
           </span>
         </div>
-        <Icon icon={open ? "arrow-down" : "arrow-up"} size={16} />
+        <Icon icon={open ? "arrow-up" : "arrow-down"} size={16} />
       </h4>
       <div
         className={clsx(
           "flex flex-col  text-neutral-300 text-sm",
-          open ? "py-3 divide-y divide-neutral-800" : "h-0 overflow-y-hidden"
+          open ? "divide-y divide-neutral-800" : "h-0 overflow-y-hidden"
         )}
       >
+        {!loading && data.length === 0 && (
+          <div className="text-neutral-400 py-3 w-full h-11 flex items-center justify-center">
+            There are no words here!
+          </div>
+        )}
         {loading && (
-          <div className="text-neutral-400 w-full h-11 flex items-center justify-center">
+          <div className="text-neutral-400 py-3 w-full h-11 flex items-center justify-center">
             Loading...
           </div>
         )}

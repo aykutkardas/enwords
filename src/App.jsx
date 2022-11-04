@@ -9,24 +9,34 @@ import Header from "./components/Header";
 import AnalyzeButton from "./components/AnalyzeButton";
 import Footer from "./components/Footer";
 
+import wordData from "./data.json";
+
 const App = () => {
-  const oldData = deserializeDB(localStorage.getItem("words"));
+  const oldData = deserializeDB(localStorage.getItem("words"))?.map((item) => ({
+    ...item,
+    types: wordData[item.word].t,
+  }));
+
   const [words, setWords] = useState(oldData);
   const [pageWords, setPageWords] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [onlyPage, setOnlyPage] = useState(true);
   const [analyze, setAnalyze] = useState(false);
-  const [pageLang, setPageLang] = useState(null);
 
   const handleAnalyze = () => {
     setLoading(true);
 
     executeScript(["getPageText.js"], ([data]) => {
       const parsedWords = wordCounter(data.result);
-      const words = Object.entries(parsedWords).map(([word, count]) => ({
+      const filteredParsedWords = Object.keys(parsedWords)
+        .filter((word) => wordData[word])
+        .map((word) => [word, parsedWords[word]]);
+
+      const words = filteredParsedWords.map(([word, count]) => ({
         word,
         count,
+        types: wordData[word].t,
         known: false,
         findCount: 1,
       }));
@@ -65,12 +75,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    executeScript(["getPageLang.js"], ([data]) => {
-      setPageLang(data.result);
-    });
-  }, []);
-
-  useEffect(() => {
     localStorage.setItem("words", serializeDB(words));
   }, [words]);
 
@@ -101,12 +105,9 @@ const App = () => {
     item.word.includes(search.toLowerCase())
   );
 
-  const isEnglish = pageLang && pageLang?.startsWith("en");
-
   return (
-    <div className="bg-neutral-900 py-[52px] h-[500px] w-[300px] ml-auto overflow-y-scroll">
+    <div className="bg-neutral-900 py-[52px] h-[600px] w-[440px] ml-auto overflow-x-hidden overflow-y-scroll relative">
       <Header handleSearch={handleSearch} />
-
       {analyze && (
         <Info
           familiarWords={familiarWords}
@@ -116,17 +117,9 @@ const App = () => {
           onlyPage={onlyPage}
         />
       )}
-
-      {!analyze && isEnglish && (
+      {!analyze && (
         <AnalyzeButton loading={loading} handleAnalyze={handleAnalyze} />
       )}
-
-      {!isEnglish && (
-        <div className="px-3 py-8 m-1 text-center select-none text-xs border border-dashed border-neutral-600">
-          <p className="text-neutral-400">This page is not in English</p>
-        </div>
-      )}
-
       <div className="p-3 flex">
         <label className="inline-flex items-center justify-center text-neutral-300 select-none">
           <input
@@ -138,7 +131,6 @@ const App = () => {
           Show the results for this page only
         </label>
       </div>
-
       {search ? (
         <Collapse
           title="Search Results"
@@ -162,6 +154,7 @@ const App = () => {
             loading={loading}
           />
           <Collapse
+            icon="check"
             title="Words You Know"
             data={knownWords}
             handleKnown={handleKnown}
@@ -169,7 +162,6 @@ const App = () => {
           />
         </>
       )}
-
       <Footer />
     </div>
   );
