@@ -1,6 +1,6 @@
 {
   "name": "enwords",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "dependencies": {
     "clsx": "^1.2.1",
