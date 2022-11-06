@@ -12,10 +12,12 @@ import Footer from "./components/Footer";
 import wordData from "./data.json";
 
 const App = () => {
-  const oldData = deserializeDB(localStorage.getItem("words"))?.map((item) => ({
-    ...item,
-    types: wordData[item.word].t,
-  }));
+  const oldData = deserializeDB(localStorage.getItem("words"))
+    ?.filter((item) => wordData[item.word])
+    .map((item) => ({
+      ...item,
+      types: wordData[item.word].t,
+    }));
 
   const [words, setWords] = useState(oldData);
   const [pageWords, setPageWords] = useState([]);
